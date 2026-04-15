@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { HOSTELS, Gender } from "@/data/hostels";
 
+
 export default function HomePage(): JSX.Element {
   const router = useRouter();
 
