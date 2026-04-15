@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import Image from "next/image";
 
-import { useForm } from "react-hook-form";
+import { useForm, FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 import { hostelregistrationSchema } from "@/lib/validation/hostelregistrationSchema";
 
@@ -16,6 +17,9 @@ import StepUploadDocuments from "@/components/registration/StepUploadDocuments";
 import StepFormPreview from "@/components/registration/StepFormPreview";
 import StepConfirm from "@/components/registration/StepConfirm";
 
+/* ✅ TYPE FROM ZOD */
+type FormData = z.infer<typeof hostelregistrationSchema>;
+
 const steps = [
   "Personal Information",
   "Address & Contact",
@@ -26,11 +30,10 @@ const steps = [
 ];
 
 export default function RegistrationPage() {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState<number>(0);
 
-  // ✅ NEW STATES
-  const [agree, setAgree] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [agree, setAgree] = useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
   const {
     register,
@@ -39,16 +42,16 @@ export default function RegistrationPage() {
     watch,
     trigger,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormData>({
     resolver: zodResolver(hostelregistrationSchema),
     defaultValues: {
       documents: {},
     },
   });
 
-  /* ✅ STEP VALIDATION */
+  /* ✅ STEP VALIDATION (FIXED) */
   const validateStep = async () => {
-    let fields: any = [];
+    let fields: FieldPath<FormData>[] = [];
 
     if (step === 0) {
       fields = [
@@ -86,7 +89,7 @@ export default function RegistrationPage() {
         "permanent.tehsil",
         "permanent.police",
         "permanent.state",
-      ];
+      ] as FieldPath<FormData>[]; // ✅ safe cast (no any)
     }
 
     if (step === 2) {
@@ -107,31 +110,28 @@ export default function RegistrationPage() {
         "documents.photo",
         "documents.signature",
         "documents.aadhaar",
-      ];
+      ] as FieldPath<FormData>[]; // ✅ safe cast
     }
 
-    const result = await trigger(fields);
-    return result;
+    return await trigger(fields);
   };
 
   /* ✅ SUBMIT */
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: FormData) => {
     if (!agree) return;
 
     console.log("FINAL DATA:", data);
-
-    // 🔥 SUCCESS POPUP
     setShowSuccess(true);
   };
 
   /* ✅ STEP COMPONENTS */
-  const stepComponents = [
-    <StepPersonalInformation register={register} errors={errors} setValue={setValue} />,
-    <StepAddressContact register={register} errors={errors} setValue={setValue} watch={watch} />,
-    <StepAcademicQualification register={register} errors={errors} />,
-    <StepUploadDocuments setValue={setValue} watch={watch} />,
-    <StepFormPreview watch={watch} />,
-    <StepConfirm agree={agree} setAgree={setAgree} />,
+  const stepComponents: React.ReactNode[] = [
+    <StepPersonalInformation key="step-0" register={register} errors={errors} setValue={setValue} />,
+    <StepAddressContact key="step-1" register={register} errors={errors} setValue={setValue} watch={watch} />,
+    <StepAcademicQualification key="step-2" register={register} errors={errors} />,
+    <StepUploadDocuments key="step-3" setValue={setValue} watch={watch} />,
+    <StepFormPreview key="step-4" watch={watch} />,
+    <StepConfirm key="step-5" agree={agree} setAgree={setAgree} />,
   ];
 
   return (
@@ -167,13 +167,9 @@ export default function RegistrationPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="max-w-5xl mx-auto p-4 bg-[#97c5cc] mt-4 rounded space-y-5"
       >
-
-        {/* STEP */}
         {stepComponents[step]}
 
-        {/* NAVIGATION */}
         <div className="flex justify-between pt-4">
-
           {step > 0 && (
             <button
               type="button"
@@ -209,33 +205,27 @@ export default function RegistrationPage() {
             </button>
           )}
         </div>
-
       </form>
 
-      {/* ✅ SUCCESS POPUP */}
+      {/* SUCCESS POPUP */}
       {showSuccess && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="bg-white p-6 rounded-md text-center space-y-4 max-w-md">
-
             <h2 className="text-xl font-semibold text-green-600">
               Form Submitted Successfully
             </h2>
-
             <p className="text-sm">
               You will receive your login credentials within 48 hours.
             </p>
-
             <button
               onClick={() => setShowSuccess(false)}
               className="bg-[#c20c27] text-white px-4 py-2 rounded"
             >
               OK
             </button>
-
           </div>
         </div>
       )}
-
     </div>
   );
 }

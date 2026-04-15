@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import SNaidu from "@/components/hostels/SNaidu";
+// import SNaidu from "@/components/hostels/SNaidu";
 import KChawala from "@/components/hostels/KChawla";
 // import PCB from "@/components/hostels/PCB";
 
