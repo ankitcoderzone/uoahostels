@@ -65,7 +65,7 @@ export default function SuperintendentLayout({
         );
 
         router.replace(
-            "/superintendent-login"
+            "/admin-login"
         );
 
     };
