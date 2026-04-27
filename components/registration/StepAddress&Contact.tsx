@@ -8,13 +8,14 @@ import {
   UseFormSetValue,
   FieldPath,
 } from "react-hook-form";
+
 import { z } from "zod";
-import { hostelregistrationSchema } from "@/lib/validation/hostelregistrationSchema";
+import { hostelregistrationSchema }
+  from "@/lib/validation/hostelregistrationSchema";
 
-/* ✅ TYPE FROM ZOD */
-type FormData = z.infer<typeof hostelregistrationSchema>;
+type FormData =
+  z.infer<typeof hostelregistrationSchema>;
 
-/* ✅ PROPS */
 type Props = {
   register: UseFormRegister<FormData>;
   errors: FieldErrors<FormData>;
@@ -26,93 +27,127 @@ export default function StepAddressContact({
   register,
   errors,
   watch,
-  setValue,
+  setValue
 }: Props) {
-  const [sameAddress, setSameAddress] = useState(false);
+
+  const [sameAddress, setSameAddress] =
+    useState(false);
 
   const inputStyle =
     "peer w-full border border-gray-400 rounded-md px-3 pt-5 pb-2 text-black bg-white focus:border-[#c20c27] focus:outline-none";
 
   const labelStyle =
-    "absolute left-3 top-2 text-xs text-gray-700 bg-white px-1 transition-all " +
-    "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 " +
-    "peer-focus:top-2 peer-focus:text-xs peer-focus:text-[#c20c27]";
+    "absolute left-3 top-2 text-xs text-gray-700 bg-white px-1";
 
-  /* ✅ TYPE-SAFE PATHS */
-  const correspondenceFields: FieldPath<FormData>[] = [
-    "correspondence.house",
-    "correspondence.village",
-    "correspondence.post",
-    "correspondence.tehsil",
-    "correspondence.police",
-    "correspondence.state",
-  ];
+  const correspondenceFields:
+    FieldPath<FormData>[] = [
+      "correspondence.house",
+      "correspondence.village",
+      "correspondence.post",
+      "correspondence.tehsil",
+      "correspondence.police",
+      "correspondence.state",
+    ];
 
-  const permanentFields: FieldPath<FormData>[] = [
-    "permanent.house",
-    "permanent.village",
-    "permanent.post",
-    "permanent.tehsil",
-    "permanent.police",
-    "permanent.state",
-  ];
+  const permanentFields:
+    FieldPath<FormData>[] = [
+      "permanent.house",
+      "permanent.village",
+      "permanent.post",
+      "permanent.tehsil",
+      "permanent.police",
+      "permanent.state",
+    ];
 
-  /* ✅ COPY ADDRESS */
   const copyAddress = () => {
-    correspondenceFields.forEach((field, index) => {
-      const value = watch(field);
-      setValue(permanentFields[index], value);
-    });
+    correspondenceFields.forEach(
+      (field, index) => {
+        const value = watch(field);
+        setValue(
+          permanentFields[index],
+          value
+        );
+      }
+    );
   };
 
   return (
     <div className="space-y-6">
 
-      {/* 🔵 CONTACT */}
-      <div className="grid md:grid-cols-3 gap-4">
+      {/* CONTACT */}
+      <div className="grid md:grid-cols-2 gap-4">
+
         {[
-          ["mobile", "Student Mobile *"],
           ["guardianMobile", "Guardian Mobile *"],
           ["email", "Student Email *"],
         ].map(([field, label]) => (
-          <div key={field} className="relative">
+          <div
+            key={field}
+            className="relative"
+          >
+
             <input
-              {...register(field as FieldPath<FormData>)}
+              {...register(
+                field as FieldPath<FormData>
+              )}
               placeholder=" "
               className={inputStyle}
             />
-            <label className={labelStyle}>{label}</label>
+
+            <label className={labelStyle}>
+              {label}
+            </label>
 
             {errors[field as keyof FormData] && (
               <p className="text-red-500 text-xs mt-1">
-                {errors[field as keyof FormData]?.message as string}
+                {
+                  errors[
+                    field as keyof FormData
+                  ]?.message as string
+                }
               </p>
             )}
+
           </div>
         ))}
+
       </div>
 
-      {/* ✅ CHECKBOX */}
+
+      {/* SAME ADDRESS */}
       <div className="flex items-center gap-3">
+
         <input
           type="checkbox"
           checked={sameAddress}
           onChange={(e) => {
-            setSameAddress(e.target.checked);
-            if (e.target.checked) copyAddress();
+            setSameAddress(
+              e.target.checked
+            );
+
+            if (e.target.checked) {
+              copyAddress();
+            }
+
           }}
         />
+
         <span className="text-sm">
           Permanent is same as Correspondence
         </span>
+
       </div>
 
-      {/* 🏠 ADDRESS */}
+
+
       <div className="grid md:grid-cols-2 gap-6">
 
-        {/* LEFT */}
+        {/* Correspondence */}
         <div>
-          <h3 className="font-semibold mb-3">Correspondence Address</h3>
+
+          <h3 className="font-semibold mb-3">
+            Correspondence Address
+          </h3>
 
           {[
             ["house", "House No."],
@@ -122,32 +157,35 @@ export default function StepAddressContact({
             ["police", "Police Station"],
             ["state", "State"],
           ].map(([field, label]) => (
-            <div key={field} className="relative mb-3">
+            <div
+              key={field}
+              className="relative mb-3"
+            >
+
               <input
-                {...register(`correspondence.${field}` as FieldPath<FormData>)}
+                {...register(
+                  `correspondence.${field}` as FieldPath<FormData>
+                )}
                 placeholder=" "
                 className={inputStyle}
               />
-              <label className={labelStyle}>{label}</label>
 
-              {errors?.correspondence?.[
-                field as keyof FormData["correspondence"]
-              ] && (
-                <p className="text-red-500 text-xs mt-1">
-                  {
-                    errors.correspondence?.[
-                      field as keyof FormData["correspondence"]
-                    ]?.message as string
-                  }
-                </p>
-              )}
+              <label className={labelStyle}>
+                {label}
+              </label>
+
             </div>
           ))}
+
         </div>
 
-        {/* RIGHT */}
+
+        {/* Permanent */}
         <div>
-          <h3 className="font-semibold mb-3">Permanent Address</h3>
+
+          <h3 className="font-semibold mb-3">
+            Permanent Address
+          </h3>
 
           {[
             ["house", "House No."],
@@ -157,31 +195,32 @@ export default function StepAddressContact({
             ["police", "Police Station"],
             ["state", "State"],
           ].map(([field, label]) => (
-            <div key={field} className="relative mb-3">
+            <div
+              key={field}
+              className="relative mb-3"
+            >
+
               <input
-                {...register(`permanent.${field}` as FieldPath<FormData>)}
+                {...register(
+                  `permanent.${field}` as FieldPath<FormData>
+                )}
                 placeholder=" "
                 className={inputStyle}
                 disabled={sameAddress}
               />
-              <label className={labelStyle}>{label}</label>
 
-              {errors?.permanent?.[
-                field as keyof FormData["permanent"]
-              ] && (
-                <p className="text-red-500 text-xs mt-1">
-                  {
-                    errors.permanent?.[
-                      field as keyof FormData["permanent"]
-                    ]?.message as string
-                  }
-                </p>
-              )}
+              <label className={labelStyle}>
+                {label}
+              </label>
+
             </div>
           ))}
+
         </div>
 
       </div>
+
     </div>
   );
+
 }

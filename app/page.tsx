@@ -48,7 +48,7 @@ export default function HomePage(): JSX.Element {
           </button>
 
           <button
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/admin-login")}
             className="px-3 md:px-4 py-2 text-xs md:text-sm font-semibold rounded-lg
               border border-[#8B1D2C] text-[#8B1D2C] hover:bg-[#F6EDEE] transition"
           >

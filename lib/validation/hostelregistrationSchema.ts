@@ -1,129 +1,262 @@
 import { z } from "zod";
 
 export const hostelregistrationSchema = z.object({
-  /* 🏨 HOSTEL */
-  hostelCategory: z.string().min(1, "Select hostel category"),
-  hostel: z.string().min(1, "Select hostel"),
 
-  /* 👤 PERSONAL INFO */
-  name: z.string().min(1, "Name is required"),
-  father: z.string().min(1, "Father name required"),
-  mother: z.string().min(1, "Mother name required"),
+  /* =========================
+     HOSTEL
+  ========================= */
 
-  roll: z.string().min(1, "Roll number required"),
+  hostelCategory: z.string().min(
+ 1,
+ "Select hostel category"
+),
 
-  aadhaar: z.string().regex(/^\d{12}$/, "Aadhaar must be 12 digits"),
+  // dynamic dropdown returns hostel id
+  hostel: z.string().min(
+ 1,
+ "Select hostel"
+),
 
-  dob: z.string().min(1, "Date of birth required"),
 
-  gender: z.string().min(1, "Select gender"),
-  nationality: z.string().min(1, "Nationality required"),
-  state: z.string().min(1, "State required"),
-  religion: z.string().min(1, "Religion required"),
+  /* =========================
+     PERSONAL INFO
+  ========================= */
 
-  fatherOccupation: z.string().min(1, "Required"),
-  income: z.string().min(1, "Select income range"),
-  sportsQuota: z.string().min(1, "Select option"),
+  name: z.string()
+    .min(1,"Name is required"),
 
-  mobile: z.string().regex(/^\d{10}$/, "Mobile must be 10 digits"),
+  father: z.string()
+    .min(1,"Father name required"),
 
-  /* 📞 CONTACT */
-  guardianMobile: z
-    .string()
-    .regex(/^\d{10}$/, "Guardian mobile must be 10 digits"),
+  mother: z.string()
+    .min(1,"Mother name required"),
 
-  email: z.string().email("Enter valid email"),
+  roll: z.string()
+    .min(1,"Roll number required"),
 
-  /* 📍 ADDRESS */
+  aadhaar: z.string()
+    .regex(
+      /^\d{12}$/,
+      "Aadhaar must be 12 digits"
+    ),
+
+  dob: z.string()
+    .min(1,"Date of birth required"),
+
+  gender: z.string()
+    .min(1,"Select gender"),
+
+  nationality: z.string()
+    .min(1,"Nationality required"),
+
+  state: z.string()
+    .min(1,"State required"),
+
+  religion: z.string()
+    .min(1,"Religion required"),
+
+  fatherOccupation: z.string()
+    .min(1,"Required"),
+
+  income: z.string()
+    .min(1,"Select income range"),
+
+  sportsQuota: z.string()
+    .min(1,"Select option"),
+
+  mobile: z.string()
+    .regex(
+      /^\d{10}$/,
+      "Mobile must be 10 digits"
+    ),
+
+
+  /* =========================
+      CONTACT
+  ========================= */
+
+  guardianMobile: z.string()
+    .regex(
+      /^\d{10}$/,
+      "Guardian mobile must be 10 digits"
+    ),
+
+  email: z.string()
+    .email("Enter valid email"),
+
+
+  /* =========================
+      ADDRESS
+  ========================= */
+
   correspondence: z.object({
-    house: z.string().min(1, "House No. required"),
-    village: z.string().min(1, "Village required"),
-    post: z.string().min(1, "Post required"),
-    tehsil: z.string().min(1, "Tehsil required"),
-    police: z.string().min(1, "Police station required"),
-    state: z.string().min(1, "State required"),
+
+    house: z.string()
+      .min(1,"House No. required"),
+
+    village: z.string()
+      .min(1,"Village required"),
+
+    post: z.string()
+      .min(1,"Post required"),
+
+    tehsil: z.string()
+      .min(1,"Tehsil required"),
+
+    police: z.string()
+      .min(1,"Police station required"),
+
+    state: z.string()
+      .min(1,"State required"),
   }),
 
   permanent: z.object({
-    house: z.string().min(1, "House No. required"),
-    village: z.string().min(1, "Village required"),
-    post: z.string().min(1, "Post required"),
-    tehsil: z.string().min(1, "Tehsil required"),
-    police: z.string().min(1, "Police station required"),
-    state: z.string().min(1, "State required"),
+
+    house: z.string()
+      .min(1,"House No. required"),
+
+    village: z.string()
+      .min(1,"Village required"),
+
+    post: z.string()
+      .min(1,"Post required"),
+
+    tehsil: z.string()
+      .min(1,"Tehsil required"),
+
+    police: z.string()
+      .min(1,"Police station required"),
+
+    state: z.string()
+      .min(1,"State required"),
   }),
 
-  /* 🎓 ACADEMIC */
 
-  // 🔵 10TH
-  tenthBoard: z.string().min(1, "Board required"),
-  tenthSchool: z.string().min(1, "School required"),
-  tenthRoll: z.string().min(1, "Roll required"),
-  tenthYear: z.string().min(1, "Year required"),
+  /* =========================
+      ACADEMIC
+  ========================= */
+
+  tenthBoard: z.string()
+    .min(1,"Board required"),
+
+  tenthSchool: z.string()
+    .min(1,"School required"),
+
+  tenthRoll: z.string()
+    .min(1,"Roll required"),
+
+  tenthYear: z.string()
+    .min(1,"Year required"),
 
   tenthMax: z.string().optional(),
   tenthObtained: z.string().optional(),
   tenthPercent: z.string().optional(),
   tenthDivision: z.string().optional(),
 
-  // 🔵 12TH
-  twelfthBoard: z.string().min(1, "Board required"),
-  twelfthSchool: z.string().min(1, "School required"),
-  twelfthRoll: z.string().min(1, "Roll required"),
-  twelfthYear: z.string().min(1, "Year required"),
+  twelfthBoard: z.string()
+    .min(1,"Board required"),
+
+  twelfthSchool: z.string()
+    .min(1,"School required"),
+
+  twelfthRoll: z.string()
+    .min(1,"Roll required"),
+
+  twelfthYear: z.string()
+    .min(1,"Year required"),
 
   twelfthMax: z.string().optional(),
   twelfthObtained: z.string().optional(),
   twelfthPercent: z.string().optional(),
   twelfthDivision: z.string().optional(),
 
-  /* 📂 DOCUMENTS */
+
+  /* =========================
+      DOCUMENTS
+  ========================= */
+
   documents: z.object({
-    photo: z
-      .any()
-      .refine((file) => !!file, "Photo required")
-      .refine((file) => !file || file.size <= 50 * 1024, "Max 50KB allowed")
-      .refine(
-        (file) =>
-          !file || ["image/jpeg", "image/jpg"].includes(file.type),
-        "Only JPG/JPEG allowed"
-      ),
 
-    signature: z
-      .any()
-      .refine((file) => !!file, "Signature required")
-      .refine((file) => !file || file.size <= 50 * 1024, "Max 50KB allowed")
+    photo: z.any()
       .refine(
-        (file) =>
-          !file || ["image/jpeg", "image/jpg"].includes(file.type),
-        "Only JPG/JPEG allowed"
-      ),
-
-    aadhaar: z
-      .any()
-      .refine((file) => !!file, "Aadhaar required")
-      .refine((file) => !file || file.size <= 1 * 1024 * 1024, "Max 1MB allowed")
+        file => !!file,
+        "Photo required"
+      )
       .refine(
-        (file) =>
+        file =>
           !file ||
-          ["image/jpeg", "image/png", "application/pdf"].includes(file.type),
-        "Only JPG, PNG, PDF allowed"
+          file.size <= 50 * 1024,
+        "Max 50KB allowed"
+      )
+      .refine(
+        file =>
+          !file ||
+          ["image/jpeg","image/jpg"]
+            .includes(file.type),
+        "Only JPG/JPEG allowed"
       ),
 
-    tenthMarksheet: z
-      .any()
+
+    signature: z.any()
+      .refine(
+        file => !!file,
+        "Signature required"
+      )
+      .refine(
+        file =>
+          !file ||
+          file.size <= 50 * 1024,
+        "Max 50KB allowed"
+      )
+      .refine(
+        file =>
+          !file ||
+          ["image/jpeg","image/jpg"]
+            .includes(file.type),
+        "Only JPG/JPEG allowed"
+      ),
+
+
+    aadhaar: z.any()
+      .refine(
+        file => !!file,
+        "Aadhaar required"
+      )
+      .refine(
+        file =>
+          !file ||
+          file.size <= 1024 * 1024,
+        "Max 1MB allowed"
+      )
+      .refine(
+        file =>
+          !file ||
+          [
+            "image/jpeg",
+            "image/png",
+            "application/pdf"
+          ].includes(file.type),
+        "Only JPG PNG PDF allowed"
+      ),
+
+    tenthMarksheet: z.any()
       .optional()
       .refine(
-        (file) => !file || file.size <= 1 * 1024 * 1024,
+        file =>
+          !file ||
+          file.size <= 1024 * 1024,
         "Max 1MB allowed"
       ),
 
-    twelfthMarksheet: z
-      .any()
+    twelfthMarksheet: z.any()
       .optional()
       .refine(
-        (file) => !file || file.size <= 1 * 1024 * 1024,
+        file =>
+          !file ||
+          file.size <= 1024 * 1024,
         "Max 1MB allowed"
       ),
-  }),
+
+  })
+
 });
