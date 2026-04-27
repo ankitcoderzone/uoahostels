@@ -378,7 +378,7 @@ export default function RegistrationPage() {
         }
 
         const res = await fetch(
-          "http://127.0.0.1:8000/hms/applications/apply/",
+          "https://hms-wyso.onrender.com/hms/applications/apply/",
           {
             method: "POST",
             body: formData

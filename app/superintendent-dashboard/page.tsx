@@ -57,7 +57,7 @@ export default function StaffDashboard() {
             try {
 
                 const res = await fetch(
-                    "http://127.0.0.1:8000/hms/accounts/auth/me/",
+                    "https://hms-wyso.onrender.com/hms/accounts/auth/me/",
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

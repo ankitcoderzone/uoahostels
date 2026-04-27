@@ -28,7 +28,7 @@ export default function StudentLoginPage() {
     try {
 
       const res = await fetch(
-        "http://127.0.0.1:8000/hms/accounts/auth/login/",
+        "https://hms-wyso.onrender.com/hms/accounts/auth/login/",
         {
           method: "POST",
           headers: {

@@ -47,7 +47,7 @@ export default function RoomPage() {
         try {
 
             const res = await fetch(
-                "http://127.0.0.1:8000/hms/accounts/auth/student/dashboard/",
+                "https://hms-wyso.onrender.com/hms/accounts/auth/student/dashboard/",
                 {
                     headers: {
                         Authorization:

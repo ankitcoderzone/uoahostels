@@ -27,7 +27,7 @@ type Room = {
     available_beds: number;
 };
 
-const API = "http://localhost:8000/hms";
+const API = "https://hms-wyso.onrender.com/hms";
 
 export default function ApplicationsPage() {
 

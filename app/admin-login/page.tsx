@@ -20,7 +20,7 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/hms/accounts/auth/login/", {
+      const res = await fetch("https://hms-wyso.onrender.com/hms/accounts/auth/login/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
