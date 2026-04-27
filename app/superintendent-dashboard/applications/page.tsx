@@ -1,257 +1,279 @@
 "use client";
 
 import {
-    useEffect,
-    useState,
-    useCallback
+useEffect,
+useState,
+useCallback
 } from "react";
+
 import {
-    Search,
-    RefreshCw,
-    BedDouble,
-    Users,
-    CheckCircle2,
-    Clock3,
-    X
+Search,
+RefreshCw,
+BedDouble,
+Users,
+CheckCircle2,
+Clock3,
+X,
+Check
 } from "lucide-react";
 
-type Application = {
-    id: number;
-    name: string;
-    roll: string;
-    email: string;
-    hostel: string;
+type Application={
+id:number;
+name:string;
+roll:string;
+email:string;
+hostel:string;
 };
 
-type Room = {
-    id: number;
-    room_number: string;
-    capacity: number;
-    occupied: number;
-    available_beds: number;
+type Room={
+id:number;
+room_number:string;
+capacity:number;
+occupied:number;
+available_beds:number;
 };
 
-const API = "https://hms-wyso.onrender.com/hms";
+type StatCardProps={
+title:string;
+value:string|number;
+icon:React.ReactNode;
+};
 
-export default function ApplicationsPage() {
+type StepCardProps={
+step:string;
+title:string;
+};
 
-    const [
-        applications,
-        setApplications
-    ] = useState<Application[]>([]);
-
-    const [
-        rooms,
-        setRooms
-    ] = useState<Room[]>([]);
-
-    const [
-        loading,
-        setLoading
-    ] = useState(true);
-
-    const [
-        selectedApp,
-        setSelectedApp
-    ] = useState<Application | null>(
-        null
-    );
-
-    const [
-        selectedRoom,
-        setSelectedRoom
-    ] = useState("");
-
-    const [
-        allocating,
-        setAllocating
-    ] = useState(false);
-
-    const [
-        search,
-        setSearch
-    ] = useState("");
-
-    const token = () => localStorage.getItem(
-        "access"
-    );
+const API=
+"https://hms-wyso.onrender.com/hms";
 
 
 
-    const fetchApplications =
-        useCallback(
-            async () => {
+export default function ApplicationsPage(){
 
-                try {
+const[
+applications,
+setApplications
+]=useState<Application[]>([]);
 
-                    setLoading(true);
+const[
+rooms,
+setRooms
+]=useState<Room[]>([]);
 
-                    const res = await fetch(
-                        `${API}/applications/pending/`,
-                        {
-                            headers: {
-                                Authorization:
-                                    `Bearer ${token()}`
-                            }
-                        }
-                    );
+const[
+loading,
+setLoading
+]=useState(true);
 
-                    const data =
-                        await res.json();
+const[
+selectedApp,
+setSelectedApp
+]=useState<Application|null>(
+null
+);
 
-                    setApplications(data);
+const[
+selectedRoom,
+setSelectedRoom
+]=useState("");
 
-                }
-                catch (e) {
-                    console.error(e);
-                }
-                finally {
-                    setLoading(false);
-                }
+const[
+allocating,
+setAllocating
+]=useState(false);
 
-            },
-            []
-        );
-
-
-    useEffect(() => {
-
-        fetchApplications();
-
-    }, [fetchApplications]);
+const[
+search,
+setSearch
+]=useState("");
 
 
 
-    async function loadRooms() {
-
-        const res = await fetch(
-            `${API}/allocations/rooms/available/`,
-            {
-                headers: {
-                    Authorization:
-                        `Bearer ${token()}`
-                }
-            }
-        );
-
-        const data =
-            await res.json();
-
-        setRooms(data);
-
-    }
+const token=()=>localStorage.getItem(
+"access"
+);
 
 
 
-    async function openDrawer(
-        app: Application
-    ) {
-        setSelectedApp(app);
-        await loadRooms();
-    }
+const fetchApplications=
+useCallback(
+async()=>{
+
+try{
+
+setLoading(true);
+
+const res=await fetch(
+`${API}/applications/pending/`,
+{
+headers:{
+Authorization:
+`Bearer ${token()}`
+}
+}
+);
+
+const data=
+await res.json();
+
+setApplications(data);
+
+}
+catch(e){
+console.error(e);
+}
+finally{
+setLoading(false);
+}
+
+},
+[]
+);
 
 
 
-    async function approveAndAllocate() {
+useEffect(()=>{
 
-        if (!selectedRoom) {
-            alert(
-                "Select room first"
-            );
-            return;
-        }
+fetchApplications();
 
-        try {
-
-            setAllocating(true);
-
-            const res = await fetch(
-                `${API}/allocations/manual-approve/${selectedApp?.id}/`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-                        Authorization:
-                            `Bearer ${token()}`
-                    },
-                    body: JSON.stringify({
-                        room_id: selectedRoom
-                    })
-                }
-            );
-
-            const data =
-                await res.json();
-
-            if (!res.ok) {
-                alert(
-                    data.error
-                );
-                return;
-            }
-
-            setApplications(
-                prev =>
-                    prev.filter(
-                        a => a.id !== selectedApp?.id
-                    )
-            );
-
-            setSelectedApp(null);
-            setSelectedRoom("");
-
-        }
-        finally {
-            setAllocating(false);
-        }
-
-    }
+},[fetchApplications]);
 
 
 
-    const filtered =
-        applications.filter(
-            a =>
-                a.name.toLowerCase()
-                    .includes(
-                        search.toLowerCase()
-                    )
-                ||
-                a.roll.toLowerCase()
-                    .includes(
-                        search.toLowerCase()
-                    )
-        );
+async function loadRooms(){
+
+const res=await fetch(
+`${API}/allocations/rooms/available/`,
+{
+headers:{
+Authorization:
+`Bearer ${token()}`
+}
+}
+);
+
+const data=
+await res.json();
+
+setRooms(data);
+
+}
 
 
 
-    if (loading) {
-        return (
-            <div className="
+async function openDrawer(
+app:Application
+){
+setSelectedApp(app);
+await loadRooms();
+}
+
+
+
+async function approveAndAllocate(){
+
+if(!selectedRoom){
+alert(
+"Please select a room"
+);
+return;
+}
+
+try{
+
+setAllocating(true);
+
+const res=await fetch(
+`${API}/allocations/manual-approve/${selectedApp?.id}/`,
+{
+method:"POST",
+headers:{
+"Content-Type":
+"application/json",
+Authorization:
+`Bearer ${token()}`
+},
+body:JSON.stringify({
+room_id:selectedRoom
+})
+}
+);
+
+const data=
+await res.json();
+
+if(!res.ok){
+alert(data.error);
+return;
+}
+
+setApplications(
+prev=>
+prev.filter(
+a=>a.id!==selectedApp?.id
+)
+);
+
+setSelectedApp(null);
+setSelectedRoom("");
+
+alert(
+"Room allocated successfully"
+);
+
+}
+finally{
+setAllocating(false);
+}
+
+}
+
+
+
+const filtered=
+applications.filter(
+a=>
+a.name.toLowerCase().includes(
+search.toLowerCase()
+)
+||
+a.roll.toLowerCase().includes(
+search.toLowerCase()
+)
+);
+
+
+
+if(loading){
+return(
+<div className="
 min-h-screen
-bg-slate-50
-p-10
+flex
+items-center
+justify-center
+text-xl
+font-semibold
+text-gray-800
 ">
-                Loading...
-            </div>
-        )
-    }
+Loading Applications...
+</div>
+)
+}
 
 
 
-    return (
+return(
 
-        <div className="
+<div className="
 min-h-screen
 bg-slate-100
 p-8
 space-y-8
 ">
 
-
-            {/* Hero */}
-            <section className="
+{/* Hero */}
+<section className="
 rounded-[36px]
 bg-gradient-to-r
 from-[#8B1D2C]
@@ -262,7 +284,7 @@ p-10
 shadow-2xl
 ">
 
-                <div className="
+<div className="
 flex
 justify-between
 items-center
@@ -270,30 +292,28 @@ flex-wrap
 gap-6
 ">
 
-                    <div>
-
-                        <h1 className="
+<div>
+<h1 className="
 text-5xl
 font-bold
 ">
-                            Application Approval Panel
-                        </h1>
+Application Approval Panel
+</h1>
 
-                        <p className="
+<p className="
 mt-4
 text-red-100
 text-lg
 ">
-                            Review, verify and allocate hostel rooms
-                        </p>
+Review pending applications and allocate hostel rooms
+</p>
+</div>
 
-                    </div>
-
-
-                    <button
-                        onClick={fetchApplications}
-                        className="
+<button
+onClick={fetchApplications}
+className="
 bg-white/20
+hover:bg-white/30
 rounded-2xl
 px-6
 py-4
@@ -301,58 +321,55 @@ font-semibold
 flex
 items-center
 gap-3
-hover:bg-white/30
 "
-                    >
-                        <RefreshCw size={18} />
-                        Refresh
-                    </button>
+>
+<RefreshCw size={18}/>
+Refresh
+</button>
 
-                </div>
+</div>
 
-            </section>
-
-
+</section>
 
 
-            {/* Stats */}
-            <section className="
+
+{/* stats */}
+<section className="
 grid
 md:grid-cols-4
 gap-6
 ">
 
-                <StatCard
-                    title="Pending"
-                    value={applications.length}
-                    icon={<Clock3 />}
-                />
+<StatCard
+title="Pending"
+value={applications.length}
+icon={<Clock3/>}
+/>
 
-                <StatCard
-                    title="Rooms"
-                    value={rooms.length}
-                    icon={<BedDouble />}
-                />
+<StatCard
+title="Rooms"
+value={rooms.length}
+icon={<BedDouble/>}
+/>
 
-                <StatCard
-                    title="Applicants"
-                    value={applications.length}
-                    icon={<Users />}
-                />
+<StatCard
+title="Applicants"
+value={applications.length}
+icon={<Users/>}
+/>
 
-                <StatCard
-                    title="Approved"
-                    value="18"
-                    icon={<CheckCircle2 />}
-                />
+<StatCard
+title="Approved"
+value="18"
+icon={<CheckCircle2/>}
+/>
 
-            </section>
-
-
+</section>
 
 
-            {/* Search */}
-            <div className="
+
+{/* Search */}
+<div className="
 bg-white
 rounded-3xl
 shadow
@@ -363,190 +380,169 @@ items-center
 gap-4
 ">
 
-                <Search className="
-text-slate-400
-"/>
+<Search className="text-gray-500"/>
 
-                <input
-                    value={search}
-                    onChange={(e) =>
-                        setSearch(
-                            e.target.value
-                        )
-                    }
-                    placeholder="
-Search applications...
-"
-                    className="
+<input
+value={search}
+onChange={(e)=>
+setSearch(
+e.target.value
+)
+}
+placeholder="Search by student or roll..."
+className="
 flex-1
 outline-none
 text-lg
-text-gray-800
+font-medium
+text-gray-900
 "
-                />
+/>
 
-            </div>
-
-
+</div>
 
 
-            {/* Workflow */}
-            <section className="
+
+<section className="
 grid
 md:grid-cols-3
 gap-6
 ">
 
-                <StepCard
-                    step="1"
-                    title="Pending Review"
-                />
+<StepCard
+step="1"
+title="Review"
+/>
 
-                <StepCard
-                    step="2"
-                    title="Allocate Room"
-                />
+<StepCard
+step="2"
+title="Allocate"
+/>
 
-                <StepCard
-                    step="3"
-                    title="Approve Student"
-                />
+<StepCard
+step="3"
+title="Approve"
+/>
 
-            </section>
-
-
+</section>
 
 
-            {/* Table */}
-            <div className="
+
+{/* Table */}
+<div className="
 bg-white
 rounded-[32px]
-shadow
+shadow-xl
 border
 overflow-hidden
 ">
 
-                <div className="
+<div className="
 p-8
 border-b
 ">
-
-                    <h2 className="
+<h2 className="
 text-2xl
 font-bold
-text-gray-800
+text-gray-900
 ">
-                        Pending Applications
-                    </h2>
+Pending Applications
+</h2>
+</div>
 
-                </div>
+<div className="overflow-x-auto">
 
+<table className="w-full">
 
-                <div className="
-overflow-x-auto
-">
-
-                    <table className="w-full">
-
-                        <thead className="
+<thead className="
 bg-slate-50
-text-gray-600
+text-gray-700
 ">
-                            <tr>
-                                <th className="p-6 text-left">
-                                    Student
-                                </th>
+<tr>
+<th className="p-6 text-left">
+Student
+</th>
 
-                                <th className="p-6 text-left">
-                                    Roll
-                                </th>
+<th className="p-6 text-left">
+Roll
+</th>
 
-                                <th className="p-6 text-left">
-                                    Email
-                                </th>
+<th className="p-6 text-left">
+Email
+</th>
 
-                                <th className="p-6 text-left">
-                                    Status
-                                </th>
+<th className="p-6 text-left">
+Status
+</th>
 
-                                <th className="p-6 text-left">
-                                    Action
-                                </th>
+<th className="p-6 text-left">
+Action
+</th>
 
-                            </tr>
-                        </thead>
+</tr>
+</thead>
 
+<tbody>
 
-                        <tbody>
-
-                            {filtered.length ?
-
-                                filtered.map(
-                                    app => (
-                                        <tr
-                                            key={app.id}
-                                            className="
+{filtered.map(app=>(
+<tr
+key={app.id}
+className="
 border-t
 hover:bg-slate-50
 "
-                                        >
+>
 
-                                            <td className="p-6">
-                                                <p className="
+<td className="p-6">
+<p className="
 font-semibold
 text-gray-900
+text-lg
 ">
-                                                    {app.name}
-                                                </p>
+{app.name}
+</p>
 
-                                                <p className="
-text-sm
-text-gray-500
+<p className="
+text-gray-600
 ">
-                                                    Hostel Applicant
-                                                </p>
-                                            </td>
+Hostel Applicant
+</p>
+</td>
 
-
-                                            <td className="
+<td className="
 p-6
 font-medium
+text-gray-900
+">
+{app.roll}
+</td>
+
+<td className="
+p-6
 text-gray-800
 ">
-                                                {app.roll}
-                                            </td>
+{app.email}
+</td>
 
-
-                                            <td className="
-p-6
-text-gray-700
-">
-                                                {app.email}
-                                            </td>
-
-
-                                            <td className="p-6">
-                                                <span className="
+<td className="p-6">
+<span className="
 px-4
 py-2
 rounded-full
 bg-amber-100
-text-amber-700
-text-sm
+text-amber-800
 font-semibold
 ">
-                                                    Pending
-                                                </span>
-                                            </td>
+Pending
+</span>
+</td>
 
-
-                                            <td className="p-6">
-
-                                                <button
-                                                    onClick={() =>
-                                                        openDrawer(app)
-                                                    }
-                                                    className="
+<td className="p-6">
+<button
+onClick={()=>
+openDrawer(app)
+}
+className="
 bg-gradient-to-r
 from-[#8B1D2C]
 to-[#b63f50]
@@ -555,284 +551,296 @@ rounded-2xl
 px-5
 py-3
 font-semibold
-hover:scale-105
-transition
 "
-                                                >
-                                                    Allocate Room
-                                                </button>
+>
+Allocate Room
+</button>
+</td>
 
-                                            </td>
+</tr>
+))}
 
-                                        </tr>
-                                    )
-                                )
+</tbody>
 
-                                :
+</table>
 
-                                <tr>
-                                    <td
-                                        colSpan={5}
-                                        className="
-text-center
-p-20
-text-gray-500
-"
-                                    >
-                                        No pending applications
-                                    </td>
-                                </tr>
+</div>
 
-                            }
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
+</div>
 
 
 
+{/* DRAWER */}
+{selectedApp &&(
 
-            {/* Drawer */}
-            {selectedApp && (
-
-                <div className="
+<div className="
 fixed
 inset-0
 z-50
 ">
 
-                    <div
-                        onClick={() =>
-                            setSelectedApp(null)
-                        }
-                        className="
+<div
+onClick={()=>
+setSelectedApp(null)
+}
+className="
 absolute
 inset-0
-bg-black/40
+bg-black/50
 "
-                    />
+/>
 
-
-                    <div className="
+<div className="
 absolute
 right-0
 top-0
 h-full
-w-[560px]
+w-[620px]
 bg-white
 shadow-2xl
-p-8
 overflow-y-auto
 ">
 
-                        <div className="
+<div className="
+sticky
+top-0
+bg-white
+border-b
+p-8
+z-20
+">
+
+<div className="
 flex
 justify-between
 items-center
-mb-8
 ">
 
-                            <h2 className="
+<div>
+<h2 className="
 text-3xl
 font-bold
+text-gray-900
 ">
-                                Allocate Room
-                            </h2>
+Allocate Room
+</h2>
 
-                            <button
-                                onClick={() =>
-                                    setSelectedApp(null)
-                                }
-                            >
-                                <X />
-                            </button>
+<p className="
+text-gray-600
+mt-2
+">
+Assign hostel room to applicant
+</p>
+</div>
 
-                        </div>
+<button
+onClick={()=>
+setSelectedApp(null)
+}
+className="
+p-2
+rounded-xl
+hover:bg-slate-100
+"
+>
+<X/>
+</button>
+
+</div>
+
+</div>
 
 
 
-                        <div className="
+<div className="p-8">
+
+<div className="
+bg-red-50
+border
+border-red-100
 rounded-3xl
-bg-slate-50
 p-6
 mb-8
 space-y-3
+text-gray-900
 ">
 
-                            <p>
-                                <b>Name:</b>
-                                {" "}
-                                {selectedApp.name}
-                            </p>
+<p>
+<b>Student:</b>
+{" "}
+{selectedApp.name}
+</p>
 
-                            <p>
-                                <b>Roll:</b>
-                                {" "}
-                                {selectedApp.roll}
-                            </p>
+<p>
+<b>Roll:</b>
+{" "}
+{selectedApp.roll}
+</p>
 
-                        </div>
+</div>
 
 
 
-                        <h3 className="
-font-semibold
-text-lg
-mb-4
+<h3 className="
+text-xl
+font-bold
+text-gray-900
+mb-5
 ">
-                            Select Available Room
-                        </h3>
+Select Available Room
+</h3>
 
 
 
-                        <div className="
-space-y-4
-">
+<div className="space-y-5">
 
-                            {rooms.map(
-                                room => (
+{rooms.map(room=>(
 
-                                    <button
-                                        key={room.id}
-                                        onClick={() =>
-                                            setSelectedRoom(
-                                                String(room.id)
-                                            )
-                                        }
-                                        className={`
+<button
+key={room.id}
+onClick={()=>
+setSelectedRoom(
+String(room.id)
+)
+}
+className={`
 w-full
+text-left
 rounded-3xl
 border-2
-p-5
-text-left
+p-6
 transition
-${selectedRoom === String(room.id)
-                                                ?
-                                                "border-[#8B1D2C] bg-red-50"
-                                                :
-                                                "border-slate-200"
-                                            }
+${
+selectedRoom===String(room.id)
+?
+"border-[#8B1D2C] bg-red-50 shadow-lg"
+:
+"border-slate-200 bg-white"
+}
 `}
-                                    >
+>
 
-                                        <div className="
+<div className="
 flex
 justify-between
+items-center
 ">
-                                            <div>
 
-                                                <h4 className="
-font-semibold
+<div>
+<h4 className="
+text-xl
+font-bold
+text-gray-900
+">
+Room {room.room_number}
+</h4>
+
+<p className="
+text-gray-700
+mt-1
+">
+Available Beds:
+{room.available_beds}
+</p>
+</div>
+
+<div className="
 text-lg
+font-semibold
+text-gray-800
 ">
-                                                    Room
-                                                    {" "}
-                                                    {room.room_number}
-                                                </h4>
+{room.occupied}/{room.capacity}
+</div>
 
-                                                <p className="
-text-gray-500
-">
-                                                    {room.available_beds}
-                                                    beds free
-                                                </p>
+</div>
 
-                                            </div>
 
-                                            <div>
-                                                {room.occupied}/
-                                                {room.capacity}
-                                            </div>
 
-                                        </div>
-
-                                        <div className="
+<div className="
 w-full
 bg-slate-200
-h-2
 rounded-full
-mt-4
+h-3
+mt-5
 ">
 
-                                            <div
-                                                style={{
-                                                    width:
-                                                        `${(room.occupied /
-                                                            room.capacity) * 100}%`
-                                                }}
-                                                className="
-h-2
+<div
+style={{
+width:
+`${(room.occupied/room.capacity)*100}%`
+}}
+className="
+h-3
 rounded-full
 bg-[#8B1D2C]
 "
-                                            />
+/>
 
-                                        </div>
-
-                                    </button>
-
-                                )
-                            )}
-
-                        </div>
+</div>
 
 
+{selectedRoom===String(room.id)&&(
+<div className="
+mt-4
+flex
+items-center
+gap-2
+text-green-700
+font-semibold
+">
+<Check size={18}/>
+Selected
+</div>
+)}
 
-                        <button
-                            onClick={
-                                approveAndAllocate
-                            }
-                            disabled={
-                                allocating
-                            }
-                            className="
+</button>
+
+))}
+
+</div>
+
+
+
+<button
+onClick={approveAndAllocate}
+disabled={allocating}
+className="
 w-full
 mt-8
 py-4
 rounded-2xl
 text-white
-font-semibold
+font-bold
 text-lg
 bg-gradient-to-r
 from-green-600
 to-emerald-500
 "
-                        >
+>
+{
+allocating
+?
+"Allocating..."
+:
+"Approve & Allocate Room"
+}
+</button>
 
-                            {
-                                allocating
-                                    ?
-                                    "Allocating..."
-                                    :
-                                    "Approve & Allot Room"
-                            }
+</div>
 
-                        </button>
+</div>
 
+</div>
 
-                    </div>
+)}
 
-                </div>
+</div>
 
-            )}
-
-        </div>
-
-    )
+)
 
 }
 
 
-
-type StatCardProps={
-title:string;
-value:string|number;
-icon:React.ReactNode;
-};
 
 function StatCard({
 title,
@@ -853,9 +861,9 @@ items-center
 ">
 
 <div>
-
 <p className="
-text-gray-500
+text-gray-600
+font-medium
 ">
 {title}
 </p>
@@ -863,12 +871,11 @@ text-gray-500
 <h2 className="
 text-4xl
 font-bold
-mt-2
 text-gray-900
+mt-2
 ">
 {value}
 </h2>
-
 </div>
 
 <div className="
@@ -882,15 +889,9 @@ text-[#8B1D2C]
 
 </div>
 )
-
 }
 
 
-
-type StepCardProps={
-step:string;
-title:string;
-};
 
 function StepCard({
 step,
@@ -924,12 +925,11 @@ mb-4
 <h3 className="
 text-xl
 font-semibold
-text-gray-800
+text-gray-900
 ">
 {title}
 </h3>
 
 </div>
 )
-
 }
