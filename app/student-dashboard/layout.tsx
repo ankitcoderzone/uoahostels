@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useState,
+    useCallback
+} from "react";
+
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -24,6 +29,103 @@ export default function StudentLayout({
 
 
 
+    const logout =
+        useCallback(() => {
+
+            localStorage.removeItem(
+                "access"
+            );
+
+            localStorage.removeItem(
+                "refresh"
+            );
+
+            localStorage.removeItem(
+                "studentAuth"
+            );
+
+            localStorage.removeItem(
+                "studentUsername"
+            );
+
+            router.replace(
+                "/student-login"
+            );
+
+        }, [router]);
+
+
+
+    const fetchStudent =
+        useCallback(
+            async () => {
+
+                try {
+
+                    const token =
+                        localStorage.getItem(
+                            "access"
+                        );
+
+                    if (!token) {
+                        logout();
+                        return;
+                    }
+
+
+                    const res = await fetch(
+                        "https://hms-wyso.onrender.com/hms/accounts/auth/student/dashboard/",
+                        {
+                            headers: {
+                                Authorization:
+                                    `Bearer ${token}`
+                            }
+                        }
+                    );
+
+
+                    if (
+                        res.status === 401
+                    ) {
+                        logout();
+                        return;
+                    }
+
+
+                    const data =
+                        await res.json();
+
+
+                    if (
+                        data?.student?.name
+                    ) {
+                        setStudentName(
+                            data.student.name
+                        );
+                    }
+
+                }
+                catch (err) {
+
+                    console.error(
+                        err
+                    );
+
+                }
+                finally {
+
+                    setCheckingAuth(
+                        false
+                    );
+
+                }
+
+            },
+            [logout]
+        );
+
+
+
     useEffect(() => {
 
         const access =
@@ -37,97 +139,35 @@ export default function StudentLayout({
             );
 
 
-        if (!access || !refresh) {
+        if (
+            !access ||
+            !refresh
+        ) {
 
             router.replace(
                 "/student-login"
             );
 
             return;
+
         }
 
 
-        fetchStudent();
+        const load = async () => {
+            await fetchStudent();
+        };
 
-    }, []);
+        load();
 
-
-
-    const fetchStudent = async () => {
-
-        try {
-
-            const token =
-                localStorage.getItem(
-                    "access"
-                );
-
-            const res = await fetch(
-                "https://hms-wyso.onrender.com/hms/accounts/auth/student/dashboard/",
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
-                }
-            );
-
-            if (res.status === 401) {
-
-                logout();
-                return;
-
-            }
-
-            const data =
-                await res.json();
-
-            if (
-                data?.student?.name
-            ) {
-                setStudentName(
-                    data.student.name
-                )
-            }
-
-        } catch (err) {
-            console.error(err);
-        }
-        finally {
-            setCheckingAuth(false);
-        }
-
-    };
-
-
-
-    const logout = () => {
-
-        localStorage.removeItem(
-            "access"
-        );
-
-        localStorage.removeItem(
-            "refresh"
-        );
-
-        localStorage.removeItem(
-            "studentAuth"
-        );
-
-        localStorage.removeItem(
-            "studentUsername"
-        );
-
-        router.replace(
-            "/student-login"
-        );
-
-    };
+    }, [
+        fetchStudent,
+        router
+    ]);
 
 
 
     if (checkingAuth) {
+
         return (
             <div className="
 min-h-screen
@@ -142,6 +182,7 @@ bg-gray-50
                 Checking session...
             </div>
         )
+
     }
 
 
@@ -154,7 +195,6 @@ flex
 bg-slate-100
 ">
 
-            {/* SIDEBAR */}
             <aside className="
 w-72
 bg-gradient-to-b
@@ -302,9 +342,7 @@ transition
 
 
 
-            {/* MAIN */}
             <div className="flex-1">
-
 
                 <header className="
 bg-white
@@ -324,7 +362,9 @@ text-2xl
 font-bold
 text-gray-800
 ">
-                            Welcome, {studentName}
+                            Welcome,
+                            {" "}
+                            {studentName}
                         </h2>
 
                         <p className="
@@ -357,7 +397,7 @@ items-center
 justify-center
 font-bold
 ">
-                            {studentName?.charAt(0)}
+                            {studentName.charAt(0)}
                         </div>
 
                     </div>
@@ -378,7 +418,6 @@ text-gray-700
                     </button>
 
                 </header>
-
 
 
 

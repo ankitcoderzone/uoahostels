@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useState,
+    useCallback
+} from "react";
+
 import { useRouter } from "next/navigation";
 
 type DashboardData = {
@@ -22,86 +27,140 @@ type DashboardData = {
     };
 };
 
+
+type ValueType =
+    string | number;
+
+type CardProps = {
+    title: string;
+    value: ValueType;
+};
+
+type BannerProps = {
+    label: string;
+    value: ValueType;
+};
+
+type InfoProps = {
+    label: string;
+    value: ValueType;
+};
+
+type StatusProps = {
+    title: string;
+    status: string;
+};
+
+
+
 export default function StudentDashboard() {
 
     const router = useRouter();
 
-    const [data, setData] = useState<
+    const [
+        data,
+        setData
+    ] = useState<
         DashboardData | null
     >(null);
 
-    const [loading, setLoading] =
-        useState(true);
+    const [
+        loading,
+        setLoading
+    ] = useState(true);
 
 
 
-    async function fetchDashboard() {
+    const fetchDashboard =
+        useCallback(
+            async () => {
 
-        const token =
-            localStorage.getItem(
-                "access"
-            );
+                const token =
+                    localStorage.getItem(
+                        "access"
+                    );
 
-        if (!token) {
-            router.push(
-                "/student-login"
-            );
-            return;
-        }
+                if (!token) {
 
-        try {
+                    router.push(
+                        "/student-login"
+                    );
 
-            const res = await fetch(
-                "https://hms-wyso.onrender.com/hms/accounts/auth/student/dashboard/",
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
+                    return;
+
                 }
-            );
 
 
-            if (res.status === 401) {
+                try {
 
-                localStorage.removeItem(
-                    "access"
-                );
-
-                localStorage.removeItem(
-                    "refresh"
-                );
-
-                router.push(
-                    "/student-login"
-                );
-
-                return;
-            }
+                    const res = await fetch(
+                        "https://hms-wyso.onrender.com/hms/accounts/auth/student/dashboard/",
+                        {
+                            headers: {
+                                Authorization:
+                                    `Bearer ${token}`
+                            }
+                        }
+                    );
 
 
-            const result =
-                await res.json();
+                    if (res.status === 401) {
 
-            setData(result);
+                        localStorage.removeItem(
+                            "access"
+                        );
 
-        } catch (err) {
+                        localStorage.removeItem(
+                            "refresh"
+                        );
 
-            console.error(err);
+                        router.push(
+                            "/student-login"
+                        );
 
-        }
-        finally {
+                        return;
 
-            setLoading(false);
+                    }
 
-        }
 
-    }
+                    const result =
+                        await res.json();
+
+                    setData(
+                        result
+                    );
+
+                }
+                catch (err) {
+
+                    console.error(
+                        err
+                    );
+
+                }
+                finally {
+
+                    setLoading(
+                        false
+                    );
+
+                }
+
+            },
+            [router]
+        );
+
 
 
     useEffect(() => {
-        fetchDashboard();
-    }, []);
+
+        const load = async () => {
+            await fetchDashboard();
+        };
+
+        load();
+
+    }, [fetchDashboard]);
 
 
 
@@ -145,8 +204,6 @@ text-gray-700
 
         <div className="space-y-10">
 
-
-            {/* Welcome Banner */}
             <section className="
 rounded-3xl
 bg-gradient-to-r
@@ -162,6 +219,7 @@ text-4xl
 font-bold
 ">
                     Welcome,
+                    {" "}
                     {data.student.name}
                 </h1>
 
@@ -172,6 +230,7 @@ text-base
 ">
                     Student Resident Dashboard
                 </p>
+
 
                 <div className="
 grid
@@ -202,7 +261,6 @@ mt-8
 
 
 
-            {/* Stats */}
             <section className="
 grid
 md:grid-cols-4
@@ -234,7 +292,6 @@ gap-6
 
 
 
-            {/* Info Panels */}
             <section className="
 grid
 lg:grid-cols-2
@@ -258,7 +315,7 @@ mb-6
                         Student Information
                     </h2>
 
-                    <div className="space-y-4 text-gray-800">
+                    <div className="space-y-4">
 
                         <InfoRow
                             label="Name"
@@ -304,7 +361,7 @@ mb-6
                         Allocation Details
                     </h2>
 
-                    <div className="space-y-4 text-gray-800">
+                    <div className="space-y-4">
 
                         <InfoRow
                             label="Hostel"
@@ -335,7 +392,6 @@ mb-6
 
 
 
-            {/* Resident Status */}
             <section className="
 bg-white
 rounded-3xl
@@ -377,7 +433,6 @@ gap-6
 
             </section>
 
-
         </div>
 
     )
@@ -386,13 +441,13 @@ gap-6
 
 
 
+
 function Card({
     title,
     value
-}: any) {
+}: CardProps) {
 
     return (
-
         <div className="
 bg-white
 rounded-3xl
@@ -418,7 +473,6 @@ mt-3
             </h3>
 
         </div>
-
     )
 
 }
@@ -428,10 +482,9 @@ mt-3
 function BannerStat({
     label,
     value
-}: any) {
+}: BannerProps) {
 
     return (
-
         <div className="
 bg-white/15
 rounded-2xl
@@ -454,7 +507,6 @@ mt-2
             </h3>
 
         </div>
-
     )
 
 }
@@ -464,10 +516,9 @@ mt-2
 function InfoRow({
     label,
     value
-}: any) {
+}: InfoProps) {
 
     return (
-
         <div className="
 flex
 justify-between
@@ -490,7 +541,6 @@ text-gray-900
             </span>
 
         </div>
-
     )
 
 }
@@ -500,10 +550,9 @@ text-gray-900
 function StatusCard({
     title,
     status
-}: any) {
+}: StatusProps) {
 
     return (
-
         <div className="
 border
 rounded-2xl
@@ -527,7 +576,6 @@ mt-3
             </h3>
 
         </div>
-
     )
 
 }

@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useState,
+    useCallback
+} from "react";
 import {
     Search,
     RefreshCw,
@@ -74,41 +78,47 @@ export default function ApplicationsPage() {
 
 
 
-    useEffect(() => {
-        fetchApplications();
-    }, []);
+    const fetchApplications =
+        useCallback(
+            async () => {
 
+                try {
 
+                    setLoading(true);
 
-    async function fetchApplications() {
+                    const res = await fetch(
+                        `${API}/applications/pending/`,
+                        {
+                            headers: {
+                                Authorization:
+                                    `Bearer ${token()}`
+                            }
+                        }
+                    );
 
-        try {
+                    const data =
+                        await res.json();
 
-            setLoading(true);
+                    setApplications(data);
 
-            const res = await fetch(
-                `${API}/applications/pending/`,
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token()}`
-                    }
                 }
-            );
+                catch (e) {
+                    console.error(e);
+                }
+                finally {
+                    setLoading(false);
+                }
 
-            const data =
-                await res.json();
+            },
+            []
+        );
 
-            setApplications(data);
 
-        } catch (e) {
-            console.error(e);
-        }
-        finally {
-            setLoading(false);
-        }
+    useEffect(() => {
 
-    }
+        fetchApplications();
+
+    }, [fetchApplications]);
 
 
 
@@ -818,14 +828,20 @@ to-emerald-500
 
 
 
-function StatCard({
-    title,
-    value,
-    icon
-}: any) {
+type StatCardProps={
+title:string;
+value:string|number;
+icon:React.ReactNode;
+};
 
-    return (
-        <div className="
+function StatCard({
+title,
+value,
+icon
+}:StatCardProps){
+
+return(
+<div className="
 bg-white
 rounded-3xl
 shadow
@@ -836,45 +852,53 @@ justify-between
 items-center
 ">
 
-            <div>
-                <p className="
+<div>
+
+<p className="
 text-gray-500
 ">
-                    {title}
-                </p>
+{title}
+</p>
 
-                <h2 className="
+<h2 className="
 text-4xl
 font-bold
 mt-2
 text-gray-900
 ">
-                    {value}
-                </h2>
-            </div>
+{value}
+</h2>
 
-            <div className="
+</div>
+
+<div className="
 bg-red-100
 p-4
 rounded-2xl
 text-[#8B1D2C]
 ">
-                {icon}
-            </div>
+{icon}
+</div>
 
-        </div>
-    )
+</div>
+)
+
 }
 
 
 
-function StepCard({
-    step,
-    title
-}: any) {
+type StepCardProps={
+step:string;
+title:string;
+};
 
-    return (
-        <div className="
+function StepCard({
+step,
+title
+}:StepCardProps){
+
+return(
+<div className="
 bg-white
 rounded-3xl
 shadow
@@ -882,7 +906,7 @@ border
 p-7
 ">
 
-            <div className="
+<div className="
 w-12
 h-12
 rounded-full
@@ -894,17 +918,18 @@ justify-center
 font-bold
 mb-4
 ">
-                {step}
-            </div>
+{step}
+</div>
 
-            <h3 className="
+<h3 className="
 text-xl
 font-semibold
 text-gray-800
 ">
-                {title}
-            </h3>
+{title}
+</h3>
 
-        </div>
-    )
+</div>
+)
+
 }

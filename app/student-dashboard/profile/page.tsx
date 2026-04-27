@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useState,
+    useCallback
+} from "react";
+
 import { useRouter } from "next/navigation";
+
 
 type ProfileData = {
     student: {
@@ -23,88 +29,129 @@ type ProfileData = {
 };
 
 
+type ValueType =
+    string | number;
+
+type BannerProps = {
+    label: string;
+    value: ValueType;
+};
+
+type InfoProps = {
+    label: string;
+    value: ValueType;
+};
+
+type StatusProps = {
+    title: string;
+    status: string;
+};
+
+
+
 export default function Profile() {
 
     const router = useRouter();
 
-    const [data, setData] = useState<
+    const [
+        data,
+        setData
+    ] = useState<
         ProfileData | null
     >(null);
 
-    const [loading, setLoading] =
-        useState(true);
+    const [
+        loading,
+        setLoading
+    ] = useState(true);
 
 
 
-    async function fetchProfile() {
+    const fetchProfile =
+        useCallback(
+            async () => {
 
-        const token =
-            localStorage.getItem(
-                "access"
-            );
+                const token =
+                    localStorage.getItem(
+                        "access"
+                    );
 
-        if (!token) {
-            router.push(
-                "/student-login"
-            );
-            return;
-        }
-
-
-        try {
-
-            const res = await fetch(
-                "https://hms-wyso.onrender.com/hms/accounts/auth/student/dashboard/",
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
+                if (!token) {
+                    router.push(
+                        "/student-login"
+                    );
+                    return;
                 }
-            );
 
 
-            if (res.status === 401) {
+                try {
 
-                localStorage.removeItem(
-                    "access"
-                );
-
-                localStorage.removeItem(
-                    "refresh"
-                );
-
-                router.push(
-                    "/student-login"
-                );
-
-                return;
-            }
+                    const res = await fetch(
+                        "https://hms-wyso.onrender.com/hms/accounts/auth/student/dashboard/",
+                        {
+                            headers: {
+                                Authorization:
+                                    `Bearer ${token}`
+                            }
+                        }
+                    );
 
 
-            const result =
-                await res.json();
+                    if (res.status === 401) {
 
-            setData(result);
+                        localStorage.removeItem(
+                            "access"
+                        );
 
-        } catch (error) {
+                        localStorage.removeItem(
+                            "refresh"
+                        );
 
-            console.error(error);
+                        router.push(
+                            "/student-login"
+                        );
 
-        }
-        finally {
+                        return;
+                    }
 
-            setLoading(false);
 
-        }
+                    const result =
+                        await res.json();
 
-    }
+                    setData(
+                        result
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    );
+
+                }
+                finally {
+
+                    setLoading(
+                        false
+                    );
+
+                }
+
+            },
+            [router]
+        );
 
 
 
     useEffect(() => {
-        fetchProfile();
-    }, []);
+
+        const load = async () => {
+            await fetchProfile();
+        };
+
+        load();
+
+    }, [fetchProfile]);
 
 
 
@@ -151,8 +198,6 @@ mx-auto
 space-y-10
 ">
 
-
-            {/* Top Welcome Banner */}
             <section className="
 rounded-3xl
 bg-gradient-to-r
@@ -176,6 +221,7 @@ text-red-100
 ">
                     Resident Student Profile
                 </p>
+
 
 
                 <div className="
@@ -213,8 +259,6 @@ lg:grid-cols-2
 gap-8
 ">
 
-
-                {/* Personal */}
                 <div className="
 bg-white
 rounded-3xl
@@ -231,6 +275,7 @@ mb-6
 ">
                         Personal Information
                     </h2>
+
 
                     <div className="space-y-4">
 
@@ -261,7 +306,6 @@ mb-6
 
 
 
-                {/* Hostel */}
                 <div className="
 bg-white
 rounded-3xl
@@ -305,13 +349,11 @@ mb-6
 
                 </div>
 
-
             </div>
 
 
 
 
-            {/* Status */}
             <section className="
 bg-white
 rounded-3xl
@@ -327,6 +369,7 @@ mb-6
 ">
                     Resident Status
                 </h2>
+
 
                 <div className="
 grid
@@ -364,10 +407,9 @@ gap-6
 function BannerCard({
     label,
     value
-}: any) {
+}: BannerProps) {
 
     return (
-
         <div className="
 bg-white/15
 rounded-2xl
@@ -390,7 +432,6 @@ mt-2
             </h3>
 
         </div>
-
     )
 
 }
@@ -400,10 +441,9 @@ mt-2
 function InfoRow({
     label,
     value
-}: any) {
+}: InfoProps) {
 
     return (
-
         <div className="
 flex
 justify-between
@@ -426,7 +466,6 @@ text-gray-900
             </span>
 
         </div>
-
     )
 
 }
@@ -436,10 +475,9 @@ text-gray-900
 function StatusCard({
     title,
     status
-}: any) {
+}: StatusProps) {
 
     return (
-
         <div className="
 border
 rounded-2xl
@@ -463,7 +501,6 @@ mt-3
             </h3>
 
         </div>
-
     )
 
 }
