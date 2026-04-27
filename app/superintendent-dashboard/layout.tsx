@@ -159,7 +159,7 @@ font-medium
                     </Link>
 
 
-                    <Link
+                    {/* <Link
                         href="/superintendent-dashboard/rooms"
                         className="
 block
@@ -172,10 +172,10 @@ font-medium
 "
                     >
                         Rooms
-                    </Link>
+                    </Link> */}
 
 
-                    <Link
+                    {/* <Link
                         href="/superintendent-dashboard/students"
                         className="
 block
@@ -188,7 +188,7 @@ font-medium
 "
                     >
                         Residents
-                    </Link>
+                    </Link> */}
 
                 </nav>
 
